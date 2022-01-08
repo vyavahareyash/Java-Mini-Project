@@ -1,0 +1,587 @@
+//save file as Garage.java
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Scanner;
+
+public class Garage {
+	static String name;
+	static int age;
+	static long mob;
+	static String dl;
+	static boolean decision;
+	static int days;
+	static int bill;
+
+	public static void main(String[] args) throws IOException {
+		System.out.println("*************************** RENTAL GARAGE ***************************\n");
+
+		Home_Page: while (true) {
+			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<< Home Page >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			System.out.println("\t1. Admin\t2. Customer\t3. Exit System\n");
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			System.out.print("Enter your choice: ");
+			int opt = Integer.parseInt(in.readLine());
+			switch (opt) {
+			case 1:
+				System.out.print("\n\tEnter your login id:\t");
+				String AdminId = in.readLine();
+				if (AdminId.equals("Admin")) {
+					System.out.print("\tEnter your password:\t");
+					String password = in.readLine();
+					if (password.equals("Admin")) {
+						Admin_Page: while (true) {
+							System.out.println(
+									"\n1. Display Records\t\t\t\t2. Search Record by customer name\n3. Search Record by vehicle name\t\t4. Exit Admin\n");
+							System.out.print("Enter your choice: ");
+							opt = Integer.parseInt(in.readLine());
+							System.out.println();
+							switch (opt) {
+							case 1:
+								displayRecords();
+								break;
+							case 2:
+								searchRecordCust();
+								break;
+							case 3:
+								searchRecordVeh();
+								break;
+							case 4:
+								System.out.println("\n\t*/*/*/*/Admin logged out/*/*/*/*\n");
+								break Admin_Page;
+							default:
+								System.out.println("Invalid choice");
+								continue Admin_Page;
+							}
+							System.out.println("\n1. Continue in Admin\t2. Exit Admin\n");
+							Decide: while (true) {
+								System.out.print("Enter your choice: ");
+								int option = Integer.parseInt(in.readLine());
+								switch (option) {
+								case 1:
+									continue Admin_Page;
+								case 2:
+									System.out.println("\n\t*/*/*/*/Admin logged out/*/*/*/*\n");
+									break Admin_Page;
+								default:
+									System.out.println("\nInvalid choice");
+									continue Decide;
+								}
+							}
+
+						}
+					} else {
+						System.out.println("\n\txxxxxxxxxx Invalid password xxxxxxxxxx\n");
+					}
+				} else {
+					System.out.println("\n\txxxxxxxxxx Invalid id xxxxxxxxxx\n");
+				}
+				break;
+			case 2:
+				try {
+					Customer_Page: while (true) {
+						System.out.println("\n\tWhich vehicle would you like to rent?\n\n\t1. Bike\t\t2. Car\n");
+						int option;
+						System.out.print("Enter your choice: ");
+						option = Integer.parseInt(in.readLine());
+						switch (option) {
+						case 1:
+							showBikes();
+							break;
+						case 2:
+							show_Cars();
+							break;
+						default:
+							decide: while (true) {
+								System.out.println("\nInvalid choice\n\n1. Continue\t\t2. Exit Customer services");
+								System.out.print("Enter your choice: ");
+								option = Integer.parseInt(in.readLine());
+								switch (option) {
+								case 1:
+									continue Customer_Page;
+								case 2:
+									break Customer_Page;
+								default:
+									continue decide;
+								}
+							}
+						}
+						System.out.println("\n1. See more Vehicles\t2. Exit Customer services\n");
+						Decide: while (true) {
+							System.out.print("Enter your choice: ");
+							option = Integer.parseInt(in.readLine());
+							switch (option) {
+							case 1:
+								continue Customer_Page;
+							case 2:
+								break Customer_Page;
+							default:
+								System.out.println("\nInvalid choice");
+								continue Decide;
+							}
+						}
+					}
+				} catch (IOException e) {
+					System.out.println("\nIOException occured" + e);
+				} finally {
+					System.out.println(
+							"\nx-x-x-x-x-x-x-x-x Thank You for visiting customer services x-x-x-x-x-x-x-x-x\n");
+				}
+				break;
+			case 3:
+				break Home_Page;
+			default:
+				System.out.println("Invalid choice");
+				continue Home_Page;
+			}
+
+		}
+
+		System.out.println("\nx-x-x-x-x-x-x-x-x Thank You, visit again. x-x-x-x-x-x-x-x-x");
+	}// end of main
+
+	public static void displayRecords() throws IOException {
+		try {
+			BufferedReader file = new BufferedReader(new FileReader("Customer_record.txt"));
+			String temp;
+			while ((temp = file.readLine()) != null) {
+				System.out.println(temp);
+			}
+			file.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("\nERROR : File not Found !!!");
+		}
+	}
+
+	public static void searchRecordCust() throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Enter customer name: ");
+		String key = in.readLine();
+		long totalLines;
+		boolean found = false;
+		int i, j;
+		String myline, linearray[];
+		totalLines = Files.lines(Paths.get("Customer_record.txt")).count();
+		for (i = 1; i < totalLines; i += 9) {
+			myline = Files.readAllLines(Paths.get("Customer_record.txt")).get(i);
+			linearray = myline.split("\t\t\t");
+			if (key.equalsIgnoreCase(linearray[1])) {
+				System.out.println("\nRecord found\n");
+				for (j = i - 1; j <= i + 5; j++) {
+					myline = Files.readAllLines(Paths.get("Customer_record.txt")).get(j);
+					System.out.println(myline);
+				}
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			System.out.println("Record not found");
+		}
+	}
+
+	public static void searchRecordVeh() throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Enter vehicle name: ");
+		String key = in.readLine();
+		long totalLines;
+		boolean found = false;
+		int i, j;
+		String myline, linearray[];
+		totalLines = Files.lines(Paths.get("Customer_record.txt")).count();
+		for (i = 4; i < totalLines; i += 9) {
+			myline = Files.readAllLines(Paths.get("Customer_record.txt")).get(i);
+			linearray = myline.split("\t\t\t");
+			if (key.equalsIgnoreCase(linearray[1])) {
+				if (!found) {
+					System.out.println("\nRecord found\n");
+				}
+				for (j = i - 4; j <= i + 2; j++) {
+					myline = Files.readAllLines(Paths.get("Customer_record.txt")).get(j);
+					System.out.println(myline);
+				}
+				System.out.println();
+				found = true;
+			}
+		}
+		if (!found) {
+			System.out.println("Record not found");
+		}
+
+	}
+
+	public static void showBikes() throws IOException {
+		Bikes_Page: while (true) {
+			System.out.println("\nChoose your bike:\n\n1. Vespa\t\t2. Pulsar\t\t3. Shine\n");
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			System.out.print("Enter your choice: ");
+			int option = Integer.parseInt(in.readLine());
+			System.out.println();
+			switch (option) {
+			case 1:
+				Bajaj Vespa = new Bajaj("Vespa", 120, 40, 500);
+				System.out.println("Bike Details:\n");
+				Vespa.get_Data();
+				decision = confirm_vehicle();
+				if (decision) {
+					days = get_days();
+					bill = Vespa.cal_rent(days);
+					decision = confirm_bill(bill);
+					if (decision) {
+						generate_receipt("Vespa", bill);
+					}
+				}
+				break Bikes_Page;
+			case 2:
+				Bajaj Pulsar = new Bajaj("Pulsar", 150, 35, 700);
+				System.out.println("Bike details:\n");
+				Pulsar.get_Data();
+				decision = confirm_vehicle();
+				if (decision) {
+					days = get_days();
+					bill = Pulsar.cal_rent(days);
+					decision = confirm_bill(bill);
+					if (decision) {
+						generate_receipt("Pulsar", bill);
+					}
+				}
+				break Bikes_Page;
+			case 3:
+				Honda Shine = new Honda("Shine", 100, 30, 650);
+				System.out.println("Bike details:\n");
+				Shine.get_Data();
+				decision = confirm_vehicle();
+				if (decision) {
+					days = get_days();
+					bill = Shine.cal_rent(days);
+					decision = confirm_bill(bill);
+					if (decision) {
+						generate_receipt("Shine", bill);
+					}
+				}
+				break Bikes_Page;
+			default:
+				System.out.println("Invalid choice");
+				continue Bikes_Page;
+			}
+		}
+	}
+
+	public static void show_Cars() throws IOException {
+		Cars_Page: while (true) {
+			System.out.println("\nChoose your car:\n\n1. Creta\t\t2. Swift\t\t3. BMW\n");
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			System.out.print("Enter your choice: ");
+			int option = Integer.parseInt(in.readLine());
+			System.out.println();
+			switch (option) {
+			case 1:
+				Hyundai Creta = new Hyundai("Hyundai creta", "Petrol", 140, 25, 3500);
+				System.out.println("Car details:\n");
+				Creta.get_Data();
+				decision = confirm_vehicle();
+				if (decision) {
+					days = get_days();
+					bill = Creta.cal_rent(days);
+					decision = confirm_bill(bill);
+					if (decision) {
+						generate_receipt("Hyundai creta", bill);
+					}
+				}
+				break Cars_Page;
+			case 2:
+				Maruti_Suzuki Swift = new Maruti_Suzuki("Maruti_Suzuki Swift", "Disel", 180, 25, 2000);
+				System.out.println("Car details:\n");
+				Swift.get_Data();
+				decision = confirm_vehicle();
+				if (decision) {
+					days = get_days();
+					bill = Swift.cal_rent(days);
+					decision = confirm_bill(bill);
+					if (decision) {
+						generate_receipt("Swift", bill);
+					}
+				}
+				break Cars_Page;
+			case 3:
+				BMW M_Series = new BMW("BMW", "Petrol", 250, 15, 5000);
+				System.out.println("Car details:\n");
+				M_Series.get_Data();
+				decision = confirm_vehicle();
+				if (decision) {
+					days = get_days();
+					bill = M_Series.cal_rent(days);
+					decision = confirm_bill(bill);
+					if (decision) {
+						generate_receipt("M_Series", bill);
+					}
+				}
+				break Cars_Page;
+			default:
+				System.out.println("Invalid choice");
+				continue Cars_Page;
+			}
+		}
+	}
+
+	public static boolean confirm_bill(int bill) {
+		System.out.println("\nThe final amount will be " + bill + " /-");
+		Scanner in = new Scanner(System.in);
+		System.out.print("\nThis will be your final amount. Do you want to proceed? (Y/N): ");
+		String dec = in.nextLine();
+		if (dec.equalsIgnoreCase("y")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean confirm_vehicle() throws IOException {
+		System.out.print("\nDo you want to rent this vehicle? (Y/N): ");
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		String decision = in.readLine();
+		if (decision.equalsIgnoreCase("y")) {
+			return true;
+		}
+		return false;
+	}
+
+	public static int get_days() {
+		Scanner in = new Scanner(System.in);
+		Enter_Days: while (true) {
+			System.out.print("\nEnter the number of days you want to rent this vehicle: ");
+			try {
+				days = in.nextInt();
+				if (days <= 0) {
+					throw new InvalidDays("No. days must be greater than 0");
+				} else {
+					break Enter_Days;
+				}
+			} catch (InvalidDays e) {
+				System.out.println("\nException occured\n" + e.getMessage() + '\n');
+			}
+		}
+		return days;
+	}
+
+	public static void generate_receipt(String vehicleName, int bill) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("\nEnter your name:\t\t");
+		name = in.readLine();
+		age: while (true) {
+			System.out.print("Enter your age:\t\t\t");
+			try {
+				age = Integer.parseInt(in.readLine());
+				if (age < 18) {
+					throw new AgeLimit("Age cannot be below 18");
+				} else {
+					break age;
+				}
+			} catch (AgeLimit e) {
+				System.out.println("\nException occured\n" + e.getMessage() + '\n');
+				continue age;
+			}
+		}
+		System.out.print("Enter you Driving license no:\t");
+		dl = in.readLine();
+		System.out.print("Enter your mobile no:\t\t");
+		mob = Long.parseLong(in.readLine());
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter("Customer_record.txt", true));
+			out.write("Date:\t\t\t\t" + java.time.LocalDate.now() + "\n");
+			out.write("Customer name:\t\t\t" + name + '\n');
+			out.write("Customer age:\t\t\t" + age + '\n');
+			out.write("Customer Driving license no:\t" + dl + '\n');
+			out.write("Vehicle rented:\t\t\t" + vehicleName + '\n');
+			out.write("Number of days vehicle rented:\t" + days + '\n');
+			out.write("Vehicle total rent:\t\t" + bill + "/-\n");
+			out.write("Customer mobile no.\t\t" + mob + "\n\n");
+			out.close();
+		} catch (IOException e) {
+			System.out.println("IOException occured " + e);
+		}
+		System.out.println("\nCustomer details recorded successfully");
+		System.out.println("\n********************* Customer Reciept *********************");
+		System.out.println("Customer name:\t\t\t" + name);
+		System.out.println("Customer age:\t\t\t" + age);
+		System.out.println("Customer mobile no.\t\t" + mob);
+		System.out.println("Customer Driving license no:\t" + dl);
+		System.out.println("Vehicle rented:\t\t\t" + vehicleName);
+		System.out.println("Number of days vehicle rented:\t" + days);
+		System.out.println("Vehicle total rent:\t\t" + bill);
+		System.out.println("************************************************************");
+	}
+}
+
+abstract class Vehicles {
+	int topSpeed;
+	int average;
+	int rent;
+
+	public Vehicles() {
+	}
+
+	public Vehicles(int topSpeed, int average, int rent) {
+		this.topSpeed = topSpeed;
+		this.average = average;
+		this.rent = rent;
+	}
+
+	public final int cal_rent(int days) {
+		int amt = rent * days;
+		return amt;
+	}
+
+	abstract void get_Data();
+}
+
+interface Bike {
+	int seats = 2;
+	int gears = 4;
+}
+
+interface Car {
+	int gears = 6;
+}
+
+interface Sedan extends Car {
+	int seats = 5;
+}
+
+interface SUV extends Car {
+	int seats = 8;
+}
+
+interface Sports extends Car {
+	int seats = 2;
+}
+
+class Bajaj extends Vehicles implements Bike {
+	public String model;
+
+	public Bajaj(String model, int topSpeed, int average, int rent) {
+		super(topSpeed, average, rent);
+		this.model = model;
+	}
+
+	void get_Data() {
+		System.out.println("Model:\t\t" + model);
+		System.out.println("Seats:\t\t" + seats);
+		System.out.println("Gears:\t\t" + gears);
+		System.out.println("Top Speed:\t" + topSpeed);
+		System.out.println("Average:\t" + average);
+		System.out.println("Rent:\t\t" + rent);
+	}
+}
+
+class Honda extends Vehicles implements Bike {
+	public String model;
+
+	public Honda(String model, int topSpeed, int average, int rent) {
+		super(topSpeed, average, rent);
+		this.model = model;
+	}
+
+	void get_Data() {
+		System.out.println("Welcome to Honda");
+		System.out.println("Model:\t\t" + model);
+		System.out.println("Seats:\t\t" + seats);
+		System.out.println("Gears:\t\t" + gears);
+		System.out.println("Top Speed:\t" + topSpeed);
+		System.out.println("Average:\t" + average);
+		System.out.println("Rent:\t\t" + rent);
+	}
+}
+
+class Maruti_Suzuki extends Vehicles implements Sedan {
+	String model;
+	String fuel;
+
+	public Maruti_Suzuki() {
+
+	}
+
+	public Maruti_Suzuki(String model, String fuel, int topSpeed, int average, int rent) {
+		super(topSpeed, average, rent);
+		this.model = model;
+		this.fuel = fuel;
+	}
+
+	void get_Data() {
+		System.out.println("Model:\t\t" + model);
+		System.out.println("Seats:\t\t" + seats);
+		System.out.println("Fuel type:\t" + fuel);
+		System.out.println("Gears:\t\t" + gears);
+		System.out.println("Top Speed:\t" + topSpeed);
+		System.out.println("Average:\t" + average);
+		System.out.println("Rent:\t\t" + rent);
+	}
+}
+
+class Hyundai extends Vehicles implements SUV {
+	String model;
+	String fuel;
+
+	public Hyundai() {
+	}
+
+	public Hyundai(String model, String fuel, int topSpeed, int average, int rent) {
+		super(topSpeed, average, rent);
+		this.model = model;
+		this.fuel = fuel;
+	}
+
+	void get_Data() {
+		System.out.println("Welcome to Hyundai !!");
+		System.out.println("Model:\t\t" + model);
+		System.out.println("Seats:\t\t" + seats);
+		System.out.println("Fuel type:\t" + fuel);
+		System.out.println("Gears:\t\t" + gears);
+		System.out.println("Top Speed:\t" + topSpeed);
+		System.out.println("Average:\t" + average);
+		System.out.println("Rent:\t\t" + rent);
+	}
+}
+
+class BMW extends Vehicles implements Sports {
+	String model;
+	String fuel;
+
+	public BMW() {
+	}
+
+	public BMW(String model, String fuel, int topSpeed, int average, int rent) {
+		super(topSpeed, average, rent);
+		this.model = model;
+		this.fuel = fuel;
+	}
+
+	void get_Data() {
+		System.out.println("Model:\t\t" + model);
+		System.out.println("Fuel type:\t" + fuel);
+		System.out.println("Gears:\t\t" + gears);
+		System.out.println("Seats:\t\t" + seats);
+		System.out.println("Top Speed:\t" + topSpeed);
+		System.out.println("Average:\t" + average);
+		System.out.println("Rent:\t\t" + rent);
+	}
+}
+
+class AgeLimit extends Exception {
+	AgeLimit(String msg) {
+		super(msg);
+	}
+}
+
+class InvalidDays extends Exception {
+	InvalidDays(String msg) {
+		super(msg);
+	}
+}
