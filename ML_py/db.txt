@@ -18,3 +18,8 @@ var mapFun = function(){emit(this.custName,this.price);};
 var redFun = function(name,price){return Array.sum(price);};
 db.orders.mapReduce(mapFun,redFun,{out:"reducedMap"})
 db.reducedMap.find()
+
+
+pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user
+jupyter nbextension enable hinterland/hinterland
