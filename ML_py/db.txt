@@ -1,0 +1,20 @@
+db.orders.insert({_id:1,custName:'customer1',date: new Date("2020-05-13"),price:70,items:[{unit:"maggie",qty:4,mrp:56},{unit:"oreo",qty:2,mrp:60}],status:"paid",member:'prime'});
+
+db.orders.find().sort({price:1})
+db.orders.find({status:"paid"})
+db.orders.find({price:{$gt:30}})
+db.orders.find({price:{$in:[50,70]}})
+db.orders.find({$and:[{price:{$gt:30}},{_id:{$gt:4}}]})
+db.orders.find({items:{$elemMatch:{unit:'maggie'}}})
+db.orders.find({custName:"/^T/"})
+db.orders.find({custName:"/e$/"})
+db.orders.find({custName:"/an/"})
+db.orders.find({$exists:{member:true}})
+
+var pipeline = [{$sort:{price:1}},{$limit:5}]
+db.orders.aggregate(pipeline)
+
+var mapFun = function(){emit(this.custName,this.price);};
+var redFun = function(name,price){return Array.sum(price);};
+db.orders.mapReduce(mapFun,redFun,{out:"reducedMap"})
+db.reducedMap.find()
